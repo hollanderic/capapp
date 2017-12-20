@@ -1,0 +1,6 @@
+*.fit
+*.fits
+*.tiff
+*.tif
+*.bmp
+build
