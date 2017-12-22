@@ -16,6 +16,9 @@ public:
     virtual bool OnInit();
 };
 
+
+
+
 /* TODO
 	make capframe work with fits objects directly.
 
@@ -24,7 +27,7 @@ class CapFrame: public wxFrame
 {
 public:
     CapFrame();
-        wxBitmap *bitmap_;
+    wxBitmap *bitmap_;
 
 private:
     void OnHello(wxCommandEvent& event);

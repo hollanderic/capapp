@@ -11,9 +11,10 @@ bool CapApp::OnInit()
 {
     CapFrame *frame = new CapFrame();
     frame->Show( true );
-    Fits fit;
-    fit.fromFile("300.fit");
-    frame->bitmap_ = wxBitmap(fit.getBuffer(),fit.getWidth(),fit.getHeight(),fit.getDepth());
+    //Fits fit;
+    //fit.fromFile("300.fit");
+    //frame->bitmap_ = new wxBitmap(fit.getBuffer(),
+    //                              fit.getWidth(),fit.getHeight(),fit.getDepth());
     return true;
 }
 CapFrame::CapFrame()
