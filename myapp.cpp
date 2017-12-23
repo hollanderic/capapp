@@ -11,7 +11,7 @@ bool CapApp::OnInit()
 {
     CapFrame *frame = new CapFrame();
     frame->Show( true );
-    //Fits fit;
+    auto fit = Fits::Open("300.fit");
     //fit.fromFile("300.fit");
     //frame->bitmap_ = new wxBitmap(fit.getBuffer(),
     //                              fit.getWidth(),fit.getHeight(),fit.getDepth());
@@ -32,7 +32,7 @@ CapFrame::CapFrame()
     menuBar->Append( menuHelp, "&Help" );
     SetMenuBar( menuBar );
     CreateStatusBar();
-    SetStatusText( "Welcome to wxWidgets!" );
+    SetStatusText( "CapApp" );
     Bind(wxEVT_MENU, &CapFrame::OnHello, this, ID_Hello);
     Bind(wxEVT_MENU, &CapFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &CapFrame::OnExit, this, wxID_EXIT);
