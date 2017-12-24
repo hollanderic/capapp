@@ -29,7 +29,7 @@ OPENCVFLAGS = $(OPENCVCFLAGS) $(OPENCVLIBS)
 
 WXFLAGS:=$(shell wx-config --cxxflags --libs)
 CFLAGS:=-stdlib=libc++ -std=c++11
-FITSFLAGS:=-I../fits
+FITSFLAGS:=-I.
 WORKING_DIR:=$(shell pwd)
 BUILD_DIR:=$(WORKING_DIR)/build
 
@@ -46,6 +46,6 @@ hello: hello.cpp
 
 test: main.cpp
 	mkdir -p $(BUILD_DIR)
-	g++ main.cpp ../fits/fits.cpp  $(FITSFLAGS) $(OPENCVFLAGS) $(WXFLAGS) $(CFLAGS) -o $(BUILD_DIR)/test
+	g++ main.cpp fits.cpp  $(FITSFLAGS) $(OPENCVFLAGS) $(WXFLAGS) $(CFLAGS) -o $(BUILD_DIR)/test
 
 
