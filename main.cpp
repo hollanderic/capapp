@@ -12,7 +12,7 @@ int main(int argc, char** argv ){
 
   char window[] = "FitsImage";
 
-  auto fit = FitsCV::Open(argv[1]);
+  auto fit = Fits::Open(argv[1]);
   if (!fit) {
     printf("Could not open file %s!\n",argv[1]);
     return -1;
@@ -24,7 +24,7 @@ int main(int argc, char** argv ){
   int width = fit->getWidth();
 
   cv::Mat im_rgb_ = cv::Mat(height, width, CV_16UC3);
-  cv::cvtColor(fit->mat(), im_rgb_, cv::COLOR_BayerRG2RGB);
+  cv::cvtColor(fit->getMat(), im_rgb_, cv::COLOR_BayerRG2RGB);
 
   //im_rgb16_.convertTo(im_rgb_, CV_8UC3, 1.0/256);
 
