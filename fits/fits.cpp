@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
-
+#include <jpeglib.h>
 #include "fits.h"
 
 
@@ -125,9 +125,48 @@ cv::Mat Fits::getMatRGB(float scale) {
 
 	cv::Mat im_out = cv::Mat(static_cast<int>(height_ * scale),
 							 static_cast<int>(width_ * scale),
-							 CV_8UC3);
+							 CV_16UC3);
   	resize(im_rgb, im_out, im_out.size());
   	return im_out;
+}
+
+int Fits::SaveJpg(const char* fname){
+
+	FILE* outfile = fopen(fname, "wb");
+	if (!outfile) return -1;
+	cv::Mat im_rgb = cv::Mat(height_, width_, CV_8UC3);
+	cv::cvtColor(getMat(), im_rgb, cv::COLOR_BayerRG2RGB);
+	cv::Mat im_rgb = getMatRGB(1.0);
+	cv::Mat im_rgb8= cv::Mat(height_, width_, CV_8UC3);
+    im_rgb.convertTo(im_rgb8, CV_8UC3, 1.0/256);
+
+
+	jpeg_compress_struct cinfo;
+	struct jpeg_error_mgr       jerr;
+
+	cinfo.err = jpeg_std_error(&jerr);
+	jpeg_create_compress(&cinfo);
+	jpeg_stdio_dest(&cinfo, outfile);
+
+	cinfo.image_width      = width_;
+	cinfo.image_height     = height_;
+	cinfo.input_components = 3;
+	cinfo.in_color_space   = JCS_RGB;
+
+	jpeg_set_defaults(&cinfo);
+/*set the quality [0..100]  */
+	jpeg_set_quality (&cinfo, 75, (boolean)1);
+	jpeg_start_compress(&cinfo, (boolean)1);
+
+	JSAMPROW row_pointer;          /* pointer to a single row */
+	uint8_t *temp = (uint8_t*)im_rgb8.data;
+	while (cinfo.next_scanline < cinfo.image_height) {
+		row_pointer = (JSAMPROW) &temp[cinfo.next_scanline*(3)*width_];
+		jpeg_write_scanlines(&cinfo, &row_pointer, 1);
+	}
+	jpeg_finish_compress(&cinfo);
+	return 0;
+
 }
 
 

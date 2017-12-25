@@ -3,4 +3,6 @@
 *.tiff
 *.tif
 *.bmp
+*.jpg
+.DS_Store
 build

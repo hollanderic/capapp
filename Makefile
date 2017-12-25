@@ -13,8 +13,12 @@ WXFLAGS:=$(shell wx-config --cxxflags --libs)
 
 CXXFLAGS+=-stdlib=libc++ -std=c++14 $(INCLUDES)
 
+CXXFLAGS+=-I/usr/local/Cellar/jpeg/9b/include -L/usr/local/Cellar/jpeg/9b/lib -ljpeg
+
 WORKING_DIR:=$(shell pwd)
 BUILD_DIR:=$(WORKING_DIR)/build
+
+
 
 .phony: myapp hello test
 

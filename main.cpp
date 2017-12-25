@@ -1,7 +1,7 @@
 
 #include<opencv2/opencv.hpp>
 #include<fits.h>
-
+#include<jpeglib.h>
 #define w 400
 
 using namespace cv;
@@ -34,5 +34,7 @@ int main(int argc, char** argv ){
   fit->printRecords();
 
   waitKey( 0 );
+
+  fit->SaveJpg("eric.jpg");
   return(0);
 }

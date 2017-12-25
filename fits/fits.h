@@ -36,6 +36,8 @@ public:
 	void	printRecords();
 
 	static std::shared_ptr<Fits> Open(const char* fname);
+	int SaveJpg(const char* fname);
+
 
 	FILE *infile;
 	int id_;
