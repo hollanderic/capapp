@@ -10,9 +10,9 @@
 
 /* TODOS
 
-	Bury constructor and use refcounting
-		may be challenging when outside entities want to use underlying data.
-
+	Keep track of image type
+		OpenFITS will be limited since FITS only tells bits per pixel and has no
+		 color info.
 */
 AstroImage::AstroImage(void){};
 AstroImage::~AstroImage(void){
