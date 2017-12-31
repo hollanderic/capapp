@@ -135,8 +135,8 @@ int Fits::SaveJpg(const char* fname){
 	FILE* outfile = fopen(fname, "wb");
 	if (!outfile) return -1;
 	cv::Mat im_rgb = cv::Mat(height_, width_, CV_8UC3);
-	cv::cvtColor(getMat(), im_rgb, cv::COLOR_BayerRG2RGB);
-	cv::Mat im_rgb = getMatRGB(1.0);
+	cv::cvtColor(getMatRGB(1.0), im_rgb, cv::COLOR_RGB2BGR);
+	//cv::Mat im_rgb = getMatRGB(1.0);
 	cv::Mat im_rgb8= cv::Mat(height_, width_, CV_8UC3);
     im_rgb.convertTo(im_rgb8, CV_8UC3, 1.0/256);
 

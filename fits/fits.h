@@ -10,6 +10,12 @@
 
 #include <opencv2/opencv.hpp>
 
+typedef enum {
+	RAW16_RGGB,
+	RAW16_MONO,
+	RAW8_RGGB,
+	RAW8_MONO
+} fits_data_format_t;
 
 #define MAX_RECORDS 36
 
@@ -28,7 +34,7 @@ public:
 	int32_t getDepth()  {return bpp_;};
 
 	// TODO - this needs to go away or offer better protections
-	char* getBuffer()   {return (char*)databuffer_;};
+	char*   getBuffer()   {return (char*)databuffer_;};
 	cv::Mat getMat()    {return cv::Mat(height_, width_,
 		                                CV_16UC1, (void*)databuffer_);};
 	cv::Mat getMat(float scale);
@@ -37,7 +43,6 @@ public:
 
 	static std::shared_ptr<Fits> Open(const char* fname);
 	int SaveJpg(const char* fname);
-
 
 	FILE *infile;
 	int id_;
@@ -60,5 +65,6 @@ private:
 	char  object_[70];
 	char  date_utc_[70];
 	char  creator_[70];
+	fits_data_format_t data_format;
 };
 
