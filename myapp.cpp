@@ -3,7 +3,7 @@
 #include "myapp.h"
 
 
-#include <fits.h>
+#include <astro_image.h>
 #include "imageframe.h"
 
 wxIMPLEMENT_APP(CapApp);

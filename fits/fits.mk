@@ -1,8 +1,0 @@
-
-MODULE=fits
-
-CWD=$(GET_LOCAL_DIR)
-
-SOURCES+=$(CWD)/fits.cpp
-
-INCLUDES+=-I$(CWD)

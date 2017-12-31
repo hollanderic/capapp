@@ -7,7 +7,7 @@ CC = g++
 
 -include make/opencv.mk
 
--include fits/fits.mk
+-include astro_image/astro_image.mk
 
 WXFLAGS:=$(shell wx-config --cxxflags --libs)
 

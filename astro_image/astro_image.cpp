@@ -5,7 +5,7 @@
 #include <string.h>
 #include <fstream>
 #include <jpeglib.h>
-#include "fits.h"
+#include "astro_image.h"
 
 
 /* TODOS
@@ -14,8 +14,8 @@
 		may be challenging when outside entities want to use underlying data.
 
 */
-Fits::Fits(void){};
-Fits::~Fits(void){
+AstroImage::AstroImage(void){};
+AstroImage::~AstroImage(void){
 	delete[] databuffer_;
 };
 
@@ -42,65 +42,65 @@ Fits::~Fits(void){
 		if (token) field = atof(token); \
 		continue; \
 	}
-std::shared_ptr<Fits> Fits::Open(const char* fname){
+std::shared_ptr<AstroImage> AstroImage::OpenFITS(const char* fname){
 
 	const char delim[2]="=";
 	const char delim2[3]="/\0";
 	char * token;
 
-	std::shared_ptr<Fits> newfit;
+	std::shared_ptr<AstroImage> newimg;
 
-	newfit.reset(new Fits());
+	newimg.reset(new AstroImage());
 
 	std::ifstream infile(fname);
 	if (!infile.is_open())
 		return NULL;
 
-	newfit->num_records_ = 0;
+	newimg->num_records_ = 0;
 
-	infile.read((char*)newfit->records_,sizeof(newfit->records_));
+	infile.read((char*)newimg->records_,sizeof(newimg->records_));
 
 	for (int i=0; i < MAX_RECORDS; i++) {
 		char tempstr[81];
-		newfit->records_[i][79] = 0;
-		strncpy(tempstr,newfit->records_[i],80);
+		newimg->records_[i][79] = 0;
+		strncpy(tempstr,newimg->records_[i],80);
 		tempstr[80]=0;
 		token=strtok(tempstr, delim);
-//Tokens Required in every fits file
-		PROC_INT_TOKEN("BITPIX", newfit->bpp_)
-		PROC_INT_TOKEN("NAXIS1", newfit->width_)
-		PROC_INT_TOKEN("NAXIS2", newfit->height_)
+//Tokens Required in every AstroImage file
+		PROC_INT_TOKEN("BITPIX", newimg->bpp_)
+		PROC_INT_TOKEN("NAXIS1", newimg->width_)
+		PROC_INT_TOKEN("NAXIS2", newimg->height_)
 //Optional tokens
-		PROC_INT_TOKEN("BZERO" , newfit->bzero_)
-		PROC_STR_TOKEN("DATE-OBS", newfit->date_utc_)
-		PROC_FL_TOKEN("EXPOSURE", newfit->exposure_)
-		PROC_FL_TOKEN("XPIXSZ", newfit->xpixsz_)
-		PROC_FL_TOKEN("YPIXSZ", newfit->ypixsz_)
-		PROC_FL_TOKEN("CCD-TEMP", newfit->ccd_temp_)
-		PROC_FL_TOKEN("GAIN", newfit->gain_)
+		PROC_INT_TOKEN("BZERO" , newimg->bzero_)
+		PROC_STR_TOKEN("DATE-OBS", newimg->date_utc_)
+		PROC_FL_TOKEN("EXPOSURE", newimg->exposure_)
+		PROC_FL_TOKEN("XPIXSZ", newimg->xpixsz_)
+		PROC_FL_TOKEN("YPIXSZ", newimg->ypixsz_)
+		PROC_FL_TOKEN("CCD-TEMP", newimg->ccd_temp_)
+		PROC_FL_TOKEN("GAIN", newimg->gain_)
 //END token (always present)
 		if(!strncmp(token,"END",3)) break;
-		newfit->num_records_++;
+		newimg->num_records_++;
 	}
 
-	newfit->datasize_ = newfit->width_ * newfit->height_ * (newfit->bpp_ / 8);
-	newfit->databuffer_ = new uint8_t[newfit->datasize_];
+	newimg->datasize_ = newimg->width_ * newimg->height_ * (newimg->bpp_ / 8);
+	newimg->databuffer_ = new uint8_t[newimg->datasize_];
 
-	infile.read((char*)newfit->databuffer_, newfit->datasize_);
+	infile.read((char*)newimg->databuffer_, newimg->datasize_);
 	uint32_t n = infile.gcount();
-	if (n != newfit->datasize_) {
+	if (n != newimg->datasize_) {
 		return NULL;
 	}
-//TODO - more robust endian swap (FITS is big endian)
-	uint16_t *databuff = (uint16_t*)newfit->databuffer_;
-	for (int x=0; x< newfit->datasize_/(newfit->bpp_/8); x++) {
+//TODO - more robust endian swap (AstroImage is big endian)
+	uint16_t *databuff = (uint16_t*)newimg->databuffer_;
+	for (int x=0; x< newimg->datasize_/(newimg->bpp_/8); x++) {
 		uint16_t temp = databuff[x];
-		databuff[x] = (((temp << 8)&0xff00) + (temp >>8)) - newfit->bzero_;
+		databuff[x] = (((temp << 8)&0xff00) + (temp >>8)) - newimg->bzero_;
 	}
-	return std::move(newfit);
+	return std::move(newimg);
 }
 
-void Fits::printRecords() {
+void AstroImage::printRecords() {
 	printf("Capture date (UTC): %s\n", date_utc_);
 	printf("Image size:         %d x %d\n", width_, height_);
 	printf("Bits per pixel:     %d\n", bpp_);
@@ -110,7 +110,7 @@ void Fits::printRecords() {
 
 }
 
-cv::Mat Fits::getMat(float scale) {
+cv::Mat AstroImage::getMat(float scale) {
 
 	cv::Mat im_preview_ = cv::Mat(static_cast<int>(height_ * scale),
 								  static_cast<int>(width_ * scale),
@@ -119,7 +119,7 @@ cv::Mat Fits::getMat(float scale) {
   	return im_preview_;
 }
 
-cv::Mat Fits::getMatRGB(float scale) {
+cv::Mat AstroImage::getMatRGB(float scale) {
  	cv::Mat im_rgb = cv::Mat(height_, width_, CV_16UC3);
   	cv::cvtColor(getMat(), im_rgb, cv::COLOR_BayerRG2RGB);
 
@@ -130,13 +130,12 @@ cv::Mat Fits::getMatRGB(float scale) {
   	return im_out;
 }
 
-int Fits::SaveJpg(const char* fname){
+int AstroImage::SaveJpg(const char* fname){
 
 	FILE* outfile = fopen(fname, "wb");
 	if (!outfile) return -1;
 	cv::Mat im_rgb = cv::Mat(height_, width_, CV_8UC3);
 	cv::cvtColor(getMatRGB(1.0), im_rgb, cv::COLOR_RGB2BGR);
-	//cv::Mat im_rgb = getMatRGB(1.0);
 	cv::Mat im_rgb8= cv::Mat(height_, width_, CV_8UC3);
     im_rgb.convertTo(im_rgb8, CV_8UC3, 1.0/256);
 

@@ -1,6 +1,6 @@
 
 #include<opencv2/opencv.hpp>
-#include<fits.h>
+#include<astro_image.h>
 #include<jpeglib.h>
 #define w 400
 
@@ -12,7 +12,7 @@ int main(int argc, char** argv ){
 
   char window[] = "FitsImage";
 
-  auto fit = Fits::Open(argv[1]);
+  auto fit = AstroImage::OpenFITS(argv[1]);
   if (!fit) {
     printf("Could not open file %s!\n",argv[1]);
     return -1;

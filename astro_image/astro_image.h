@@ -15,20 +15,17 @@ typedef enum {
 	RAW16_MONO,
 	RAW8_RGGB,
 	RAW8_MONO
-} fits_data_format_t;
+} data_format_t;
 
 #define MAX_RECORDS 36
 
-typedef std::shared_ptr<uint8_t> fitsBuffer;
+typedef std::shared_ptr<uint8_t> AstroImageBuffer;
 
-class FitsCV;
-
-class  Fits {
+class  AstroImage {
 
 public:
-	~Fits();
+	~AstroImage();
 
-	friend FitsCV;
 	int32_t getWidth()  {return width_;};
 	int32_t getHeight() {return height_;};
 	int32_t getDepth()  {return bpp_;};
@@ -41,14 +38,14 @@ public:
 	cv::Mat getMatRGB(float scale);
 	void	printRecords();
 
-	static std::shared_ptr<Fits> Open(const char* fname);
+	static std::shared_ptr<AstroImage> OpenFITS(const char* fname);
 	int SaveJpg(const char* fname);
 
 	FILE *infile;
 	int id_;
 
 private:
-	Fits();
+	AstroImage();
 	char records_[MAX_RECORDS][80];
 	int  num_records_;
 	uint8_t* databuffer_;
@@ -65,6 +62,6 @@ private:
 	char  object_[70];
 	char  date_utc_[70];
 	char  creator_[70];
-	fits_data_format_t data_format;
+	data_format_t data_format;
 };
 
