@@ -67,9 +67,6 @@ public:
 
     uint32_t    setROI(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
     uint32_t    loadData();
-    uint32_t    showData();
-    uint32_t    showRGB();
-    void        showPreviewWindow();
     double      adu();
 
     std::shared_ptr<AstroImage> getAstroImage();

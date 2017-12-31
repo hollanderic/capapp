@@ -203,15 +203,6 @@ uint32_t ZWOCamera::loadData() {
     return 0;
 }
 
-uint32_t ZWOCamera::showRGB() {
-    im_rgb_ = cv::Mat(height_, width_, CV_8UC3);
-    cv::cvtColor(image_, im_rgb_, cv::COLOR_BayerRG2BGR);
-
-    imshow("PreviewWindow",im_rgb_);
-    eclogf(INFO,"Displayed RGB Image\n");
-    return 0;
-}
-
 std::shared_ptr<AstroImage> ZWOCamera::getAstroImage(){
 
     std::shared_ptr<AstroImage> newimg = AstroImage::Create(width_,height_,bpp_ * 8);
@@ -228,32 +219,4 @@ std::shared_ptr<AstroImage> ZWOCamera::getAstroImage(){
 
 }
 
-
-void ZWOCamera::onMouse(int event, int x, int y, int, void* ctx){
-
-    ZWOCamera *ecam = static_cast<ZWOCamera*>(ctx);
-    uint32_t log_flags_ = ecam->log_flags_;
-
-    if (!ecam->mouse_down_ && event == EVENT_LBUTTONDOWN) {
-        eclogf(INFO,"Mousedown @%5d:%5d  %d\n",x,y,event);
-        ecam->mouse_down_ = true;
-    }
-
-    if (ecam->mouse_down_ && event == EVENT_LBUTTONUP) {
-        eclogf(INFO,"Mouseup @%5d:%5d  %d\n",x,y,event);
-        ecam->mouse_down_ = false;
-    }
-}
-
-void ZWOCamera::showPreviewWindow() {
-    //image_ = Mat::zeros(height_, width_, CV_16UC1 );
-    namedWindow("PreviewWindow", CV_WINDOW_AUTOSIZE);
-    setMouseCallback("PreviewWindow",onMouse,this);
-}
-
-uint32_t ZWOCamera::showData() {
-    //namedWindow( "image preview", CV_WINDOW_AUTOSIZE );
-    imshow("PreviewWindow",image_);
-    return 0;
-}
 
