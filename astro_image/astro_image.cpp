@@ -16,7 +16,8 @@
 */
 AstroImage::AstroImage(void){};
 AstroImage::~AstroImage(void){
-	delete[] databuffer_;
+	if (databuffer_)
+		delete[] databuffer_;
 };
 
 
@@ -107,7 +108,6 @@ void AstroImage::printRecords() {
 	printf("Sensor temp (C):    %6.1f\n", ccd_temp_);
 	printf("Pixel size:         %4.2f x %4.2f\n", xpixsz_, ypixsz_);
 	printf("Exposure time (s):  %6.2f\n", exposure_);
-
 }
 
 cv::Mat AstroImage::getMat(float scale) {

@@ -1,6 +1,8 @@
 
 #include<opencv2/opencv.hpp>
 #include<astro_image.h>
+#include<zcam.h>
+
 #include<jpeglib.h>
 #define w 400
 
@@ -11,6 +13,10 @@ using namespace cv;
 int main(int argc, char** argv ){
 
   char window[] = "FitsImage";
+  ZWOCamera ec;
+  if (!ec.isConnected()) {
+    return 0;
+  }
 
   auto fit = AstroImage::OpenFITS(argv[1]);
   if (!fit) {

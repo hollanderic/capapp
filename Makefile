@@ -2,12 +2,12 @@
 
 -include make/engine.mk
 
-platform = x64
 CC = g++
 
 -include make/opencv.mk
 
 -include astro_image/astro_image.mk
+-include zcam/zcam.mk
 
 WXFLAGS:=$(shell wx-config --cxxflags --libs)
 
@@ -36,5 +36,6 @@ test: main.cpp
 	@echo "Makefile list: $(MAKEFILE_LIST)"
 	@mkdir -p $(BUILD_DIR)
 	@g++ main.cpp $(SOURCES) $(WXFLAGS) $(CXXFLAGS) -o $(BUILD_DIR)/test
-
+	@echo '$(ZWOLIBS) $(BUILD_DIR)/test $$*' >$(BUILD_DIR)/tester
+	@chmod +x $(BUILD_DIR)/tester
 
