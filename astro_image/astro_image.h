@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <memory>
+//#include <zcam.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -20,11 +21,14 @@ typedef enum {
 #define MAX_RECORDS 36
 
 typedef std::shared_ptr<uint8_t> AstroImageBuffer;
+class AstroImage;
+
 
 class  AstroImage {
 
 public:
 	~AstroImage();
+	friend class ZWOCamera;
 
 	int32_t getWidth()  {return width_;};
 	int32_t getHeight() {return height_;};
@@ -39,6 +43,8 @@ public:
 	void	printRecords();
 
 	static std::shared_ptr<AstroImage> OpenFITS(const char* fname);
+	static std::shared_ptr<AstroImage> Create(int width, int height, int bpp);
+
 	int SaveJpg(const char* fname);
 
 	FILE *infile;

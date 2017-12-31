@@ -21,6 +21,18 @@ AstroImage::~AstroImage(void){
 };
 
 
+std::shared_ptr<AstroImage> AstroImage::Create(int width, int height, int bpp){
+	std::shared_ptr<AstroImage> newimg;
+	newimg.reset(new AstroImage());
+	newimg->width_ = width;
+	newimg->height_ = height;
+	newimg->bpp_ = bpp;
+
+	newimg->datasize_ = newimg->width_ * newimg->height_ * (newimg->bpp_ / 8);
+	newimg->databuffer_ = new uint8_t[newimg->datasize_];
+
+	return std::move(newimg);
+}
 
 #define PROC_STR_TOKEN(tkn,field) \
 	if(!strncmp(token,tkn,strlen(tkn))) { \

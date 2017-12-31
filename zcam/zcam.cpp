@@ -6,6 +6,7 @@
 #include <time.h>
 #include <unistd.h>
 
+
 #include "zcam.h"
 
 using namespace cv;
@@ -137,6 +138,11 @@ long ZWOCamera::setExposure(const char* val){
     return setExposure(e);
 }
 
+long ZWOCamera::setExposure(long val) {
+    exposure_time_ = val;
+    return setVal(ASI_EXPOSURE,val);
+}
+
 void ZWOCamera::startExposure() {
     ASI_BOOL dark = ASI_FALSE;
     ASIStartExposure(idx_, dark);
@@ -205,6 +211,23 @@ uint32_t ZWOCamera::showRGB() {
     eclogf(INFO,"Displayed RGB Image\n");
     return 0;
 }
+
+std::shared_ptr<AstroImage> ZWOCamera::getAstroImage(){
+
+    std::shared_ptr<AstroImage> newimg = AstroImage::Create(width_,height_,bpp_ * 8);
+
+    ASI_ERROR_CODE stat;
+    stat = ASIGetDataAfterExp(0,(unsigned char*)newimg->getBuffer(),width_ * height_ * bpp_ );
+    if (stat != ASI_SUCCESS) {
+        eclogf(ERROR,"GetImage failed - %d\n",stat);
+        return NULL;
+    }
+    newimg->exposure_ = (float)exposure_time_/1000000.0;
+
+    return std::move(newimg);
+
+}
+
 
 void ZWOCamera::onMouse(int event, int x, int y, int, void* ctx){
 

@@ -1,10 +1,12 @@
 
 #pragma once
 
+#include <astro_image.h>
 #include <opencv2/opencv.hpp>
 #include <unistd.h>
 
 #include "ASICamera2.h"
+
 using namespace cv;
 
 #define ECAM_LOGS_ALL   (0xffffffff)
@@ -43,7 +45,7 @@ public:
     long        setGain(const char* val);
 
     long        getExposure()           { return getVal(ASI_EXPOSURE);};
-    long        setExposure(long val)   { return setVal(ASI_EXPOSURE,val);};
+    long        setExposure(long val);
     long        setExposure(const char* val);
     void        startExposure();
     int         exposureStatus();
@@ -62,6 +64,7 @@ public:
     void        disableLogs(uint32_t flags) { log_flags_ &= ~flags;};
 
     uint32_t    saveTIFF(const char* fname);
+
     uint32_t    setROI(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
     uint32_t    loadData();
     uint32_t    showData();
@@ -69,6 +72,7 @@ public:
     void        showPreviewWindow();
     double      adu();
 
+    std::shared_ptr<AstroImage> getAstroImage();
 
 private:
     static void onMouse(int event, int x, int y, int, void*);
@@ -88,6 +92,7 @@ private:
     uint32_t pixel_size_;
     uint32_t bpp_;
     int      bin_;
+    long     exposure_time_;
 
     Mat image_;
     Mat im_rgb16_;
